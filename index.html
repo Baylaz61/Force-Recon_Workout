@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Force Recon — Kettlebell Programı</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDEEE7; --bg-2:#E4E6DC; --surface:#FBFBF7; --surface-2:#F2F3EB;
+  --border:#D8DACD; --border-strong:#C6C9B7;
+  --ink:#20241B; --muted:#6B7060; --faint:#9A9E8C;
+  --accent:#556B3D; --accent-strong:#42552E; --accent-soft:#E7EEDA; --accent-ink:#33421F;
+  --amber:#A9691A; --amber-soft:#F6E9D0; --amber-ink:#7A4B12;
+  --danger:#B23A2E;
+  --ring-track:#E2E4D6;
+  --shadow:0 1px 2px rgba(30,35,20,.05), 0 10px 26px -14px rgba(30,35,20,.22);
+  --shadow-lg:0 2px 4px rgba(30,35,20,.06), 0 22px 44px -22px rgba(30,35,20,.34);
+}
+:root[data-theme="dark"]{
+  --bg:#14180F; --bg-2:#0F1209; --surface:#1D231A; --surface-2:#232A1E;
+  --border:#333B2B; --border-strong:#3F4834;
+  --ink:#ECEFE4; --muted:#A6AC96; --faint:#7D836F;
+  --accent:#93B567; --accent-strong:#AECD82; --accent-soft:#2A3520; --accent-ink:#CFE2B0;
+  --amber:#E0A24A; --amber-soft:#39301A; --amber-ink:#F0C583;
+  --danger:#E6796C;
+  --ring-track:#2C3323;
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 30px -16px rgba(0,0,0,.7);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.4), 0 26px 50px -24px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+h1,h2,h3,h4,.disp{font-family:'Oswald',sans-serif;letter-spacing:.01em;line-height:1.15}
+.eyebrow{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;font-weight:600;color:var(--accent)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 clamp(16px,4vw,28px)}
+a{color:inherit}
+
+/* Header */
+header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.head-row{display:flex;align-items:center;justify-content:space-between;gap:12px;height:64px}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand .mark{width:40px;height:40px;border-radius:11px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:1.05rem;box-shadow:var(--shadow);flex:none}
+.brand .t1{font-family:'Oswald';font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-size:1rem;line-height:1}
+.brand .t2{font-size:.7rem;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.head-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:40px;height:40px;border-radius:11px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-size:.95rem;transition:.15s}
+.icon-btn:hover{color:var(--ink);border-color:var(--border-strong)}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:12px;border:1px solid var(--border)}
+.tab{border:0;background:transparent;color:var(--muted);font-family:'Oswald';text-transform:uppercase;letter-spacing:.06em;font-weight:600;font-size:.74rem;padding:8px 13px;border-radius:9px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.tab i{font-size:.8rem}
+.tab:hover{color:var(--ink)}
+.tab.active{background:var(--accent);color:#fff;box-shadow:var(--shadow)}
+.tab .lbl{display:inline}
+@media(max-width:560px){.tab{padding:8px 10px}.tab .lbl{display:none}.brand .t2{display:none}}
+
+main{padding:22px 0 40px}
+.view{display:flex;flex-direction:column;gap:18px}
+.view[hidden]{display:none}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+.pad{padding:clamp(16px,3vw,22px)}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.section-head h3{font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:9px}
+.section-head h3 i{color:var(--accent);font-size:.95rem}
+.muted{color:var(--muted)}.faint{color:var(--faint)}
+.tiny{font-size:.72rem}
+
+/* Hero — next session */
+.hero{background:linear-gradient(135deg,var(--surface),var(--surface-2));border:1px solid var(--border);border-radius:18px;padding:clamp(18px,3.4vw,26px);box-shadow:var(--shadow-lg);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:var(--accent-soft);filter:blur(10px);opacity:.6;pointer-events:none}
+.hero-inner{position:relative;z-index:1}
+.hero h2{font-size:clamp(1.55rem,4.5vw,2.1rem);font-weight:700;margin:8px 0 4px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:.72rem;font-weight:600;font-family:'Oswald';letter-spacing:.05em;text-transform:uppercase}
+.chip-accent{background:var(--accent-soft);color:var(--accent-ink);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent)}
+.chip-amber{background:var(--amber-soft);color:var(--amber-ink);border:1px solid color-mix(in srgb,var(--amber) 35%,transparent)}
+.chip-b{background:color-mix(in srgb,var(--accent) 8%,var(--surface));color:var(--accent);border:1px solid var(--border-strong)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:.86rem;margin-top:10px}
+.hero-meta b{color:var(--ink);font-weight:600}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+
+/* Buttons */
+.btn{border:0;cursor:pointer;font-family:'Oswald';text-transform:uppercase;letter-spacing:.05em;font-weight:600;font-size:.82rem;padding:12px 20px;border-radius:12px;display:inline-flex;align-items:center;gap:9px;transition:.15s;text-decoration:none}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:var(--shadow)}
+.btn-primary:hover{background:var(--accent-strong)}
+.btn-ghost{background:var(--surface);color:var(--ink);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--border-strong)}
+.btn-sm{padding:8px 13px;font-size:.72rem;border-radius:10px}
+.btn:focus-visible,.tab:focus-visible,.icon-btn:focus-visible,.setrow button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Progress bar */
+.pbar{height:9px;border-radius:999px;background:var(--ring-track);overflow:hidden}
+.pbar > i{display:block;height:100%;border-radius:999px;background:var(--accent);transition:width .35s ease}
+.pbar.amber > i{background:var(--amber)}
+
+/* Week strip */
+.weeks{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:640px){.weeks{grid-template-columns:repeat(2,1fr)}}
+.week{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px;cursor:pointer;transition:.15s;text-align:left}
+.week:hover{border-color:var(--border-strong)}
+.week.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset, var(--shadow)}
+.week .wk-top{display:flex;align-items:center;justify-content:space-between}
+.week .wk-name{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;font-weight:600;color:var(--accent)}
+.week.deload .wk-name{color:var(--amber)}
+.week .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.week .wk-seq{display:flex;gap:5px;margin:10px 0 4px}
+.seqbox{flex:1;text-align:center;font-family:'Oswald';font-weight:600;font-size:.78rem;padding:5px 0;border-radius:7px;background:var(--surface-2);border:1px solid var(--border)}
+.seqbox.done{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent}
+.week .wk-foot{font-size:.66rem;color:var(--faint);margin-top:6px}
+
+/* Day slots */
+.days{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:720px){.days{grid-template-columns:1fr}}
+.day{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px;display:flex;flex-direction:column;gap:10px;transition:.15s}
+.day.done{border-color:color-mix(in srgb,var(--accent) 45%,transparent);background:color-mix(in srgb,var(--accent-soft) 45%,var(--surface))}
+.day .d-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.day .d-name{font-family:'Oswald';text-transform:uppercase;letter-spacing:.07em;font-size:.72rem;color:var(--muted);font-weight:600}
+.day h4{font-size:1.02rem;font-weight:600}
+.day .d-sum{font-size:.76rem;color:var(--muted)}
+.day .d-actions{display:flex;gap:8px;margin-top:2px}
+.day .d-actions .btn{flex:1;justify-content:center}
+.check-btn{border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:10px;padding:8px 11px;cursor:pointer;font-family:'Oswald';text-transform:uppercase;letter-spacing:.05em;font-size:.7rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:.15s;flex:none}
+.check-btn.on{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent}
+
+/* Workout header */
+.wo-nav{display:flex;gap:8px}
+.badge-day{width:52px;height:52px;border-radius:13px;display:grid;place-items:center;font-family:'Oswald';font-weight:700;font-size:1.4rem;flex:none}
+.badge-A{background:var(--accent);color:#fff}
+.badge-B{background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent);border:1px solid var(--border-strong)}
+
+/* Exercise cards */
+.ex{background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;transition:.2s}
+.ex.done{border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+.ex-head{display:flex;gap:13px;padding:16px 18px;align-items:flex-start}
+.ex-num{width:30px;height:30px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);color:var(--accent);font-family:'Oswald';font-weight:700;display:grid;place-items:center;font-size:.85rem;flex:none;margin-top:1px}
+.ex.done .ex-num{background:var(--accent);color:#fff;border-color:transparent}
+.ex-title{flex:1;min-width:0}
+.ex-title h4{font-size:1.02rem;font-weight:600;line-height:1.25}
+.ex-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tag{font-size:.68rem;padding:2px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted);font-weight:500}
+.tag.equip{color:var(--accent-ink);background:var(--accent-soft);border-color:transparent}
+.ex-note{color:var(--muted);font-size:.82rem;padding:0 18px 4px 61px;margin-top:-4px}
+.ex-body{padding:4px 18px 18px}
+
+/* Set rows */
+.setrow{display:flex;align-items:center;gap:12px;padding:11px 13px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);margin-top:8px;transition:.15s}
+.setrow.done{background:var(--accent-soft);border-color:transparent}
+.setrow .s-lbl{font-family:'Oswald';font-weight:600;font-size:.82rem;min-width:56px}
+.setrow .s-tgt{flex:1;font-size:.85rem;color:var(--ink)}
+.setrow.done .s-tgt{color:var(--accent-ink)}
+.setrow .s-rest{font-size:.72rem;color:var(--muted);display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.setrow .s-check{width:40px;height:40px;border-radius:11px;border:1.5px solid var(--border-strong);background:var(--surface);color:var(--faint);cursor:pointer;font-size:1rem;transition:.15s;flex:none;display:grid;place-items:center}
+.setrow .s-check:hover{border-color:var(--accent);color:var(--accent)}
+.setrow.done .s-check{background:var(--accent);border-color:transparent;color:#fff}
+@media(max-width:480px){.setrow .s-rest{display:none}}
+
+/* timed/prep controls */
+.timed-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.timed-row .btn{flex:1;justify-content:center;min-width:130px}
+
+/* Deload banner */
+.banner{border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;font-size:.86rem}
+.banner-amber{background:var(--amber-soft);border:1px solid color-mix(in srgb,var(--amber) 35%,transparent);color:var(--amber-ink)}
+.banner i{font-size:1.05rem;margin-top:1px}
+
+/* Guide */
+.guide-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:720px){.guide-grid{grid-template-columns:1fr}}
+.g-card{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:17px}
+.g-card h3{font-size:1rem;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.g-card p{font-size:.85rem;color:var(--muted)}
+.g-card b{color:var(--ink);font-weight:600}
+.steps{list-style:none;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:6px 0 6px 34px;font-size:.85rem;color:var(--muted)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:5px;width:22px;height:22px;border-radius:7px;background:var(--accent);color:#fff;font-family:'Oswald';font-weight:600;font-size:.72rem;display:grid;place-items:center}
+.steps li b{color:var(--ink)}
+
+/* Timer sheet (signature) */
+.timer-sheet{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--surface);border-top:1px solid var(--border);box-shadow:0 -14px 40px -18px rgba(0,0,0,.4);padding:16px clamp(16px,4vw,28px);padding-bottom:calc(16px + env(safe-area-inset-bottom));transform:translateY(120%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.timer-sheet.show{transform:translateY(0)}
+.timer-sheet.mode-rest{border-top:3px solid var(--amber)}
+.timer-sheet.mode-work{border-top:3px solid var(--accent)}
+.timer-inner{max-width:1040px;margin:0 auto;display:flex;align-items:center;gap:16px}
+.ring{width:74px;height:74px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:conic-gradient(var(--ring-color) calc(var(--pct)*1%), var(--ring-track) 0);}
+.ring::before{content:"";position:absolute;width:60px;height:60px;border-radius:50%;background:var(--surface)}
+.ring{position:relative}
+.ring .num{position:relative;z-index:1;font-family:'Oswald';font-weight:600;font-size:1.15rem;letter-spacing:.02em}
+.timer-sheet.mode-rest{--ring-color:var(--amber)}
+.timer-sheet.mode-work{--ring-color:var(--accent)}
+.timer-txt{flex:1;min-width:0}
+.timer-mode{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;font-weight:600}
+.mode-rest .timer-mode{color:var(--amber)}
+.mode-work .timer-mode{color:var(--accent)}
+.timer-label{font-size:.9rem;color:var(--ink);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer-ctrls{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.t-btn{border:1px solid var(--border);background:var(--surface-2);color:var(--ink);border-radius:10px;padding:9px 12px;cursor:pointer;font-family:'Oswald';font-weight:600;font-size:.76rem;letter-spacing:.03em;transition:.15s;min-width:44px}
+.t-btn:hover{border-color:var(--border-strong)}
+.t-btn.skip{background:var(--accent);color:#fff;border-color:transparent}
+.mode-rest .t-btn.skip{background:var(--amber)}
+@media(max-width:560px){
+  .timer-inner{flex-wrap:wrap;gap:12px}
+  .timer-txt{order:2;flex-basis:calc(100% - 90px)}
+  .timer-ctrls{order:3;flex-basis:100%;justify-content:space-between}
+  .t-btn{flex:1}
+}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;z-index:70;background:rgba(20,24,15,.55);backdrop-filter:blur(4px);display:grid;place-items:center;padding:20px}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;max-width:420px;width:100%;padding:22px;box-shadow:var(--shadow-lg)}
+.modal h3{font-size:1.15rem;font-weight:600}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,140%);z-index:80;background:var(--accent);color:#fff;padding:12px 18px;border-radius:12px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px;font-weight:500;font-size:.88rem;transition:transform .3s ease;max-width:90vw}
+.toast.show{transform:translate(-50%,0)}
+.toast.show.raised{transform:translate(-50%,-96px)}
+
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap head-row">
+    <div class="brand">
+      <div class="mark"><i class="fa-solid fa-dumbbell"></i></div>
+      <div>
+        <div class="t1">Force Recon</div>
+        <div class="t2">14 kg + 12 kg Kettlebell · 4 haftalık döngü</div>
+      </div>
+    </div>
+    <div class="head-actions">
+      <nav class="tabs" role="tablist">
+        <button class="tab active" id="tab-home" onclick="go('home')"><i class="fa-solid fa-house"></i><span class="lbl">Bugün</span></button>
+        <button class="tab" id="tab-workout" onclick="go('workout')"><i class="fa-solid fa-bolt"></i><span class="lbl">Antrenman</span></button>
+        <button class="tab" id="tab-guide" onclick="go('guide')"><i class="fa-solid fa-book"></i><span class="lbl">Rehber</span></button>
+      </nav>
+      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Tema değiştir" aria-label="Tema değiştir"><i class="fa-solid fa-moon"></i></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HOME -->
+  <section class="view" id="view-home">
+    <div class="hero">
+      <div class="hero-inner" id="hero"></div>
+    </div>
+
+    <div class="card pad" style="display:flex;flex-direction:column;gap:12px">
+      <div class="section-head">
+        <h3><i class="fa-solid fa-chart-simple"></i> Döngü İlerlemesi</h3>
+        <span class="tiny muted" id="cycle-count">0 / 12 oturum</span>
+      </div>
+      <div class="pbar"><i id="cycle-bar" style="width:0%"></i></div>
+      <p class="tiny faint">Sıra Pzt → Çar → Cum, hafta hafta ilerler. 4. hafta deload'dur; sonrasında sistem 1. haftaya döner.</p>
+    </div>
+
+    <div class="card pad" style="display:flex;flex-direction:column;gap:14px">
+      <div class="section-head">
+        <h3><i class="fa-solid fa-calendar-week"></i> Haftalar</h3>
+        <button class="btn btn-ghost btn-sm" onclick="openReset()"><i class="fa-solid fa-rotate-right"></i> Sıfırla</button>
+      </div>
+      <div class="weeks" id="weeks"></div>
+      <div class="days" id="days"></div>
+    </div>
+  </section>
+
+  <!-- WORKOUT -->
+  <section class="view" id="view-workout" hidden>
+    <div class="card pad">
+      <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;justify-content:space-between">
+        <div style="display:flex;gap:14px;align-items:center;min-width:0">
+          <div class="badge-day" id="wo-badge">A</div>
+          <div style="min-width:0">
+            <div class="eyebrow" id="wo-eyebrow">Hafta 1 · Pazartesi</div>
+            <h2 style="font-size:1.5rem;font-weight:700;margin-top:2px" id="wo-title">Gün A</h2>
+            <div class="tiny muted" id="wo-focus">Güç &amp; süperset</div>
+          </div>
+        </div>
+        <div class="wo-nav">
+          <button class="btn btn-ghost btn-sm" onclick="stepSession(-1)" title="Önceki oturum"><i class="fa-solid fa-chevron-left"></i> Önceki</button>
+          <button class="btn btn-ghost btn-sm" onclick="stepSession(1)" title="Sonraki oturum">Sonraki <i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+      </div>
+
+      <div id="wo-deload" hidden style="margin-top:14px">
+        <div class="banner banner-amber">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <div><b>Deload haftası.</b> Set ve süreler yaklaşık %50 azaltıldı — birikmiş yorgunluğu atma zamanı.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="tiny muted">Oturum ilerlemesi</span>
+          <span class="tiny muted" id="wo-progress-txt">0 / 0</span>
+        </div>
+        <div class="pbar" id="wo-progress-wrap"><i id="wo-progress-bar" style="width:0%"></i></div>
+      </div>
+    </div>
+
+    <div id="ex-list" style="display:flex;flex-direction:column;gap:14px"></div>
+
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn btn-primary" onclick="finishSession()"><i class="fa-solid fa-flag-checkered"></i> Oturumu tamamla</button>
+    </div>
+  </section>
+
+  <!-- GUIDE -->
+  <section class="view" id="view-guide" hidden>
+    <div class="card pad" style="display:flex;flex-direction:column;gap:16px">
+      <div class="section-head"><h3><i class="fa-solid fa-circle-info"></i> Nasıl kullanılır?</h3></div>
+      <ol class="steps">
+        <li><b>Bugün</b> sekmesindeki "Sıradaki antrenman" kartından <b>Antrenmana başla</b>'ya dokun.</li>
+        <li>Her seti bitirince sağdaki <b>onay kutusuna</b> dokun — o hareketin mola süresiyle <b>geri sayım otomatik başlar</b>.</li>
+        <li>Mola çubuğunda <b>+15 / −15 sn</b> ile süreyi ayarla, hazırsan <b>Atla</b>'ya bas. Süre bitince sesli/titreşimli uyarı gelir.</li>
+        <li>Süre bazlı hareketlerde (Clean &amp; Jerk, Swing) <b>Başlat</b> ile çalışma zamanlayıcısını çalıştır.</li>
+        <li>Tüm hareketler bitince oturum otomatik "tamamlandı" olur; <b>Önceki / Sonraki</b> ile döngüde gezinebilirsin.</li>
+      </ol>
+    </div>
+
+    <div class="card pad" style="display:flex;flex-direction:column;gap:16px">
+      <div class="section-head"><h3><i class="fa-solid fa-shield-halved"></i> Kurallar &amp; sağlık notları</h3></div>
+      <div class="guide-grid">
+        <div class="g-card">
+          <h3><i class="fa-solid fa-triangle-exclamation"></i> Sağ kol güvenlik notu</h3>
+          <p>Sağ kol iyileşene kadar tek kol hareketlerinde (<b>snatch, clean &amp; jerk</b>) öncelik kesinlikle <b>sol kolda</b>. Ağrısız hale gelince kademeli ekle; zorlama, gerekirse fizyoterapiste danış.</p>
+        </div>
+        <div class="g-card">
+          <h3><i class="fa-solid fa-stopwatch"></i> Mola kuralı</h3>
+          <p>Nefesin hâlâ çok düzensizse veya form bozulacaksa süreye birkaç saniye ekle (<b>+15 sn</b>). <b>Süreler rehberdir, katı kural değil.</b></p>
+        </div>
+        <div class="g-card">
+          <h3><i class="fa-solid fa-arrows-rotate"></i> Döngü mantığı</h3>
+          <p>Dönüşüm <b>gün bazında</b>. Her hafta Pzt/Çar/Cum <b>A/B/A</b> veya <b>B/A/B</b> döner. 4. hafta deload; sonrasında 1. haftaya döner.</p>
+        </div>
+        <div class="g-card">
+          <h3><i class="fa-solid fa-weight-hanging"></i> Ekipman</h3>
+          <p>1× <b>14 kg</b> kettlebell · 1× <b>12 kg</b> kettlebell · barfiks demiri. Gün B swing için <b>26 kg</b> (veya en ağır çift/tek kombinasyon).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Timer sheet -->
+<div class="timer-sheet" id="timer-sheet" aria-live="polite">
+  <div class="timer-inner">
+    <div class="ring" id="ring" style="--pct:100"><span class="num" id="ring-num">00:00</span></div>
+    <div class="timer-txt">
+      <div class="timer-mode" id="timer-mode">Dinlenme</div>
+      <div class="timer-label" id="timer-label">—</div>
+    </div>
+    <div class="timer-ctrls">
+      <button class="t-btn" onclick="adjust(-15)">−15</button>
+      <button class="t-btn" onclick="adjust(15)">+15</button>
+      <button class="t-btn" id="pause-btn" onclick="togglePause()">Duraklat</button>
+      <button class="t-btn skip" onclick="skipTimer()">Atla</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal" hidden>
+  <div class="modal" id="modal-body"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i><span id="toast-msg"></span></div>
+
+<script>
+/* ---------- storage (localStorage with in-memory fallback) ---------- */
+const mem={};
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return k in mem?mem[k]:d;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){mem[k]=v;}},
+  del(k){try{localStorage.removeItem(k);}catch(e){delete mem[k];}}
+};
+
+/* ---------- data ---------- */
+function reps(n,target,rest){return Array.from({length:n},(_,i)=>({label:'Set '+(i+1),target,rest}));}
+
+const scheduleMap={1:['A','B','A'],2:['B','A','B'],3:['A','B','A'],4:['A','B','A']};
+const dayNames=['Pazartesi','Çarşamba','Cuma'];
+
+const routines={
+  A:{name:'Gün A',focus:'Güç & süperset',summary:'Barfiks · Clean & Press · Front Squat · Snatch',
+    exercises:[
+      {id:'a0',kind:'prep',name:'Isınma',duration:8*60,note:'Eklem turları, 10× halo, 5× kalça köprüsü, 5× goblet squat (12 kg).'},
+      {id:'a1',kind:'superset',name:'Blok 1 · Barfiks + Çift KB Clean & Press',equip:'14+12 kg',note:'Her tur: barfiks → kısa mola → 5 Clean & Press.',deloadKeep:3,
+        sets:[
+          {label:'Tur 1',target:'1 barfiks + 5 C&P',rest:90},
+          {label:'Tur 2',target:'2 barfiks + 5 C&P',rest:90},
+          {label:'Tur 3',target:'3 barfiks + 5 C&P',rest:90},
+          {label:'Tur 4',target:'1 barfiks + 5 C&P',rest:90},
+          {label:'Tur 5',target:'2 barfiks + 5 C&P',rest:120},
+        ]},
+      {id:'a2',kind:'strength',name:'Duraklamalı Front Squat',equip:'14+12 kg',note:'En altta 1 sn bekle.',deloadKeep:3,sets:reps(5,'5 tekrar',105)},
+      {id:'a3',kind:'strength',name:'Tek Kol Snatch',equip:'14 kg · SOL öncelikli',note:'Zorlu ama tükenmeden. Sağ kol iyileşene kadar sol ağırlıklı.',deloadKeep:3,sets:reps(5,'5–8 tekrar',75)},
+      {id:'a4',kind:'core',name:'Asılı Bacak Kaldırma',note:'Kontrollü in-çık.',deloadKeep:3,sets:reps(5,'5–8 tekrar',40)},
+      {id:'a5',kind:'prep',name:'Soğuma & Esneme',duration:5*60,note:'Hafif esneme + nefes.'},
+    ]},
+  B:{name:'Gün B',focus:'Dayanıklılık & core',summary:'Clean & Jerk · Karın · Front Squat + Barfiks · Swing',
+    exercises:[
+      {id:'b0',kind:'prep',name:'Isınma',duration:8*60,note:'A günüyle aynı: eklem turları + hafif goblet squat.'},
+      {id:'b1',kind:'timed',name:'Tek Kol Clean & Jerk',equip:'14 kg · SOL öncelikli',note:'Düşük–orta tempo, kesintisiz. Gerekirse bell yere, 5–10 sn nefes.',duration:7*60,deloadDuration:3.5*60},
+      {id:'b2',kind:'core',name:'Karın · Plank + Leg Raise',note:'Plank ve leg raise setlerini dönüşümlü uygula.',deloadKeep:3,
+        sets:[
+          {label:'Plank 1',target:'20–40 sn',rest:40},
+          {label:'Leg raise 1',target:'8–12 tekrar',rest:40},
+          {label:'Plank 2',target:'20–40 sn',rest:40},
+          {label:'Leg raise 2',target:'8–12 tekrar',rest:40},
+          {label:'Plank 3',target:'20–40 sn',rest:40},
+        ]},
+      {id:'b3',kind:'superset',name:'Blok 3 · Front Squat + Barfiks',equip:'14+12 kg',note:'Her tur: 10 front squat → mola → 4–6 barfiks.',deloadKeep:3,
+        sets:reps(5,'10 squat + 4–6 barfiks',75)},
+      {id:'b4',kind:'timed',name:'Swing',equip:'çift bell / 26 kg',note:'10–20 tekrarlık setler; aralarında 20–30 sn yürüyerek toparlan.',duration:17*60,deloadDuration:9*60},
+      {id:'b5',kind:'prep',name:'Soğuma & Esneme',duration:5*60,note:'Hafif esneme.'},
+    ]}
+};
+
+/* ---------- state ---------- */
+const state={
+  activeWeek:store.get('fr_week',1),
+  slot:store.get('fr_slot',{week:1,dayIndex:0}),
+  completed:store.get('fr_completed',{}),
+  setProgress:store.get('fr_sets',{}),
+  theme:store.get('fr_theme','light')
+};
+const cycleSlots=[];for(let w=1;w<=4;w++)for(let d=0;d<3;d++)cycleSlots.push({week:w,dayIndex:d});
+const slotKey=s=>'w'+s.week+'_d'+s.dayIndex;
+const dayTypeOf=s=>scheduleMap[s.week][s.dayIndex];
+const fmt=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+
+/* ---------- init ---------- */
+document.documentElement.setAttribute('data-theme',state.theme);
+setThemeIcon();
+renderHome();renderWorkout();
+
+/* ---------- navigation ---------- */
+function go(v){
+  ['home','workout','guide'].forEach(x=>{
+    document.getElementById('view-'+x).hidden=(x!==v);
+    document.getElementById('tab-'+x).classList.toggle('active',x===v);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleTheme(){
+  state.theme=state.theme==='light'?'dark':'light';
+  store.set('fr_theme',state.theme);
+  document.documentElement.setAttribute('data-theme',state.theme);
+  setThemeIcon();
+}
+function setThemeIcon(){
+  document.querySelector('#theme-btn i').className=state.theme==='light'?'fa-solid fa-moon':'fa-solid fa-sun';
+}
+
+/* ---------- home ---------- */
+function nextIncomplete(){return cycleSlots.find(s=>!state.completed[slotKey(s)])||null;}
+function cycleDoneCount(){return cycleSlots.filter(s=>state.completed[slotKey(s)]).length;}
+
+function renderHome(){
+  const nx=nextIncomplete();
+  const hero=document.getElementById('hero');
+  if(nx){
+    const type=dayTypeOf(nx),r=routines[type],deload=nx.week===4;
+    hero.innerHTML=`
+      <span class="chip ${deload?'chip-amber':'chip-accent'}"><i class="fa-solid fa-flag"></i> ${deload?'Deload haftası':'Sıradaki antrenman'}</span>
+      <h2>${r.name}</h2>
+      <div class="hero-meta">
+        <span><i class="fa-solid fa-calendar-day"></i> Hafta <b>${nx.week}</b> · <b>${dayNames[nx.dayIndex]}</b></span>
+        <span><i class="fa-solid fa-crosshairs"></i> <b>${r.focus}</b></span>
+      </div>
+      <p class="muted" style="font-size:.86rem;margin-top:8px">${r.summary}</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="startSession(${nx.week},${nx.dayIndex})"><i class="fa-solid fa-play"></i> Antrenmana başla</button>
+        <button class="btn btn-ghost" onclick="go('guide')"><i class="fa-solid fa-book"></i> Nasıl kullanılır?</button>
+      </div>`;
+  }else{
+    hero.innerHTML=`
+      <span class="chip chip-accent"><i class="fa-solid fa-trophy"></i> Döngü tamamlandı</span>
+      <h2>4 hafta tamam 💪</h2>
+      <p class="muted" style="font-size:.9rem;margin-top:6px">Tüm oturumları bitirdin. Yeni döngüye başlamak için sıfırla.</p>
+      <div class="hero-actions"><button class="btn btn-primary" onclick="openReset()"><i class="fa-solid fa-rotate-right"></i> Yeni döngü başlat</button></div>`;
+  }
+
+  const done=cycleDoneCount();
+  document.getElementById('cycle-count').textContent=done+' / 12 oturum';
+  document.getElementById('cycle-bar').style.width=(done/12*100)+'%';
+
+  // weeks
+  const wc=document.getElementById('weeks');wc.innerHTML='';
+  for(let w=1;w<=4;w++){
+    const deload=w===4,active=state.activeWeek===w,sch=scheduleMap[w];
+    const seq=sch.map((t,i)=>`<div class="seqbox ${state.completed['w'+w+'_d'+i]?'done':''}">${t}</div>`).join('');
+    const el=document.createElement('button');
+    el.className='week'+(active?' active':'')+(deload?' deload':'');
+    el.onclick=()=>{state.activeWeek=w;store.set('fr_week',w);renderHome();};
+    el.innerHTML=`
+      <div class="wk-top"><span class="wk-name">${deload?'Deload':'Hafta '+w}</span>${active?'<span class="dot"></span>':''}</div>
+      <div class="wk-seq">${seq}</div>
+      <div class="wk-foot">${deload?'Hacim %50':'Tam hacim'} · Pzt / Çar / Cum</div>`;
+    wc.appendChild(el);
+  }
+
+  // day slots for active week
+  const dc=document.getElementById('days');dc.innerHTML='';
+  scheduleMap[state.activeWeek].forEach((type,i)=>{
+    const key='w'+state.activeWeek+'_d'+i,done=!!state.completed[key],deload=state.activeWeek===4,r=routines[type];
+    const el=document.createElement('div');
+    el.className='day'+(done?' done':'');
+    el.innerHTML=`
+      <div class="d-top">
+        <span class="d-name">${dayNames[i]}</span>
+        <span class="chip ${type==='A'?'chip-accent':'chip-b'}">${r.name}${deload?' · Deload':''}</span>
+      </div>
+      <h4>${type==='A'?'Barfiks & Clean & Press':'Clean & Jerk & Swing'}</h4>
+      <div class="d-sum">${r.summary}</div>
+      <div class="d-actions">
+        <button class="btn btn-primary btn-sm" onclick="startSession(${state.activeWeek},${i})"><i class="fa-solid fa-play"></i> Başla</button>
+        <button class="check-btn ${done?'on':''}" onclick="toggleDone('${key}')"><i class="fa-solid ${done?'fa-circle-check':'fa-circle'}"></i> ${done?'Bitti':'İşaretle'}</button>
+      </div>`;
+    dc.appendChild(el);
+  });
+}
+
+function toggleDone(key){
+  if(state.completed[key]){delete state.completed[key];toast('İşaret kaldırıldı.');}
+  else{state.completed[key]=true;toast('Oturum tamamlandı olarak işaretlendi.');}
+  store.set('fr_completed',state.completed);
+  renderHome();
+}
+
+/* ---------- workout ---------- */
+function startSession(week,dayIndex){
+  state.slot={week,dayIndex};store.set('fr_slot',state.slot);
+  state.activeWeek=week;store.set('fr_week',week);
+  renderWorkout();go('workout');
+}
+function stepSession(dir){
+  const idx=cycleSlots.findIndex(s=>s.week===state.slot.week&&s.dayIndex===state.slot.dayIndex);
+  const nxt=cycleSlots[(idx+dir+cycleSlots.length)%cycleSlots.length];
+  state.slot={week:nxt.week,dayIndex:nxt.dayIndex};store.set('fr_slot',state.slot);
+  state.activeWeek=nxt.week;store.set('fr_week',nxt.week);
+  renderWorkout();renderHome();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function activeExercises(){
+  const type=dayTypeOf(state.slot),deload=state.slot.week===4;
+  return routines[type].exercises.map(ex=>{
+    const e={...ex};
+    if(deload){
+      if(e.sets&&e.deloadKeep)e.sets=e.sets.slice(0,e.deloadKeep);
+      if(e.kind==='timed'&&e.deloadDuration)e.duration=e.deloadDuration;
+    }
+    return e;
+  });
+}
+function unitId(exId,i){return exId+(i==null?'_x':'_'+i);}
+function unitsFor(ex){return ex.sets?ex.sets.map((_,i)=>unitId(ex.id,i)):[unitId(ex.id,null)];}
+function getProg(){const k=slotKey(state.slot);return state.setProgress[k]||(state.setProgress[k]={});}
+
+function renderWorkout(){
+  const type=dayTypeOf(state.slot),r=routines[type],deload=state.slot.week===4;
+  document.getElementById('wo-badge').textContent=type;
+  document.getElementById('wo-badge').className='badge-day badge-'+type;
+  document.getElementById('wo-eyebrow').textContent='Hafta '+state.slot.week+' · '+dayNames[state.slot.dayIndex]+(deload?' · Deload':'');
+  document.getElementById('wo-title').textContent=r.name+(deload?' — Deload (%50)':'');
+  document.getElementById('wo-focus').textContent=r.focus;
+  document.getElementById('wo-deload').hidden=!deload;
+
+  const list=document.getElementById('ex-list');list.innerHTML='';
+  const exs=activeExercises();const prog=getProg();
+
+  exs.forEach((ex,idx)=>{
+    const units=unitsFor(ex);
+    const allDone=units.every(u=>prog[u]);
+    const card=document.createElement('div');
+    card.className='ex'+(allDone?' done':'');
+    let tags='';
+    if(ex.equip)tags+=`<span class="tag equip"><i class="fa-solid fa-weight-hanging"></i> ${ex.equip}</span>`;
+    if(ex.sets)tags+=`<span class="tag">${ex.sets.length} set</span>`;
+    if(ex.kind==='timed')tags+=`<span class="tag">${fmt(ex.duration)} dk</span>`;
+    if(ex.kind==='prep')tags+=`<span class="tag">${fmt(ex.duration)} dk · esnek</span>`;
+
+    let body='';
+    if(ex.sets){
+      ex.sets.forEach((st,i)=>{
+        const u=unitId(ex.id,i),done=!!prog[u];
+        body+=`<div class="setrow ${done?'done':''}">
+          <span class="s-lbl">${st.label}</span>
+          <span class="s-tgt">${st.target}</span>
+          <span class="s-rest"><i class="fa-solid fa-hourglass-half"></i> ${fmt(st.rest)}</span>
+          <button class="s-check" aria-label="Seti tamamla" onclick="completeSet('${ex.id}',${i},${st.rest},'${(ex.name+' · '+st.label).replace(/'/g,"\\'")}')"><i class="fa-solid fa-check"></i></button>
+        </div>`;
+      });
+    }else if(ex.kind==='timed'){
+      const u=unitId(ex.id,null),done=!!prog[u];
+      body+=`<div class="timed-row">
+        <button class="btn btn-ghost" onclick="startWork(${ex.duration},'${ex.name.replace(/'/g,"\\'")}')"><i class="fa-solid fa-stopwatch"></i> Başlat (${fmt(ex.duration)})</button>
+        <button class="btn ${done?'btn-ghost':'btn-primary'}" onclick="toggleUnit('${ex.id}',null)"><i class="fa-solid ${done?'fa-rotate-left':'fa-check'}"></i> ${done?'Geri al':'Bitti'}</button>
+      </div>`;
+    }else{ // prep
+      const u=unitId(ex.id,null),done=!!prog[u];
+      body+=`<div class="timed-row">
+        <button class="btn btn-ghost" onclick="startWork(${ex.duration},'${ex.name.replace(/'/g,"\\'")}')"><i class="fa-solid fa-stopwatch"></i> Zamanlayıcı</button>
+        <button class="btn ${done?'btn-ghost':'btn-primary'}" onclick="toggleUnit('${ex.id}',null)"><i class="fa-solid ${done?'fa-rotate-left':'fa-check'}"></i> ${done?'Geri al':'Bitti'}</button>
+      </div>`;
+    }
+
+    card.innerHTML=`
+      <div class="ex-head">
+        <div class="ex-num">${idx===0?'<i class=\"fa-solid fa-fire\"></i>':(idx===exs.length-1?'<i class=\"fa-solid fa-wind\"></i>':idx)}</div>
+        <div class="ex-title">
+          <h4>${ex.name}</h4>
+          <div class="ex-tags">${tags}</div>
+        </div>
+      </div>
+      ${ex.note?`<div class="ex-note">${ex.note}</div>`:''}
+      <div class="ex-body">${body}</div>`;
+    list.appendChild(card);
+  });
+
+  updateWorkoutProgress();
+}
+
+function completeSet(exId,i,rest,label){
+  const prog=getProg(),u=unitId(exId,i);
+  if(prog[u]){delete prog[u];}
+  else{prog[u]=true;if(rest>0)startRest(rest,label);}
+  store.set('fr_sets',state.setProgress);
+  renderWorkout();
+  maybeAutoFinish();
+}
+function toggleUnit(exId,i){
+  const prog=getProg(),u=unitId(exId,i);
+  if(prog[u])delete prog[u];else prog[u]=true;
+  store.set('fr_sets',state.setProgress);
+  renderWorkout();
+  maybeAutoFinish();
+}
+function updateWorkoutProgress(){
+  const exs=activeExercises(),prog=getProg();
+  let total=0,done=0;
+  exs.forEach(ex=>unitsFor(ex).forEach(u=>{total++;if(prog[u])done++;}));
+  document.getElementById('wo-progress-txt').textContent=done+' / '+total;
+  document.getElementById('wo-progress-bar').style.width=(total?done/total*100:0)+'%';
+  document.getElementById('wo-progress-wrap').classList.toggle('amber',state.slot.week===4);
+}
+function maybeAutoFinish(){
+  const exs=activeExercises(),prog=getProg();
+  const all=exs.every(ex=>unitsFor(ex).every(u=>prog[u]));
+  const key=slotKey(state.slot);
+  if(all&&!state.completed[key]){
+    state.completed[key]=true;store.set('fr_completed',state.completed);
+    renderHome();toast('Oturum tamamlandı — harika iş! 💪');
+    beep(3);vibrate([120,60,120,60,220]);
+  }
+}
+function finishSession(){
+  const key=slotKey(state.slot);
+  state.completed[key]=true;store.set('fr_completed',state.completed);
+  renderHome();toast('Oturum kaydedildi.');go('home');
+}
+
+/* ---------- timer engine ---------- */
+const T={raf:null,end:0,remaining:0,total:0,mode:'rest',paused:false,label:''};
+const sheet=document.getElementById('timer-sheet');
+
+function startRest(sec,label){openTimer(sec,'rest',label);}
+function startWork(sec,label){openTimer(sec,'work',label);}
+
+function openTimer(sec,mode,label){
+  unlockAudio();
+  T.total=sec;T.remaining=sec;T.mode=mode;T.paused=false;T.label=label;T.end=Date.now()+sec*1000;
+  sheet.classList.remove('mode-rest','mode-work');
+  sheet.classList.add('mode-'+mode,'show');
+  document.getElementById('toast').classList.add('raised');
+  document.getElementById('timer-mode').textContent=mode==='rest'?'Dinlenme':'Çalışma';
+  document.getElementById('timer-label').textContent=label;
+  document.getElementById('pause-btn').textContent='Duraklat';
+  loop();
+}
+function loop(){
+  cancelAnimationFrame(T.raf);
+  const step=()=>{
+    if(!T.paused)T.remaining=(T.end-Date.now())/1000;
+    if(T.remaining<=0){T.remaining=0;paint();return finishTimer();}
+    paint();T.raf=requestAnimationFrame(step);
+  };
+  step();
+}
+function paint(){
+  document.getElementById('ring-num').textContent=fmt(T.remaining);
+  const pct=T.total?Math.max(0,Math.min(100,T.remaining/T.total*100)):0;
+  document.getElementById('ring').style.setProperty('--pct',pct);
+}
+function adjust(d){
+  T.total=Math.max(5,T.total+d);
+  if(T.paused)T.remaining=Math.max(0,T.remaining+d);
+  else T.end+=d*1000;
+  paint();if(!T.paused)loop();
+}
+function togglePause(){
+  T.paused=!T.paused;
+  const b=document.getElementById('pause-btn');
+  if(T.paused){cancelAnimationFrame(T.raf);b.textContent='Devam';}
+  else{T.end=Date.now()+T.remaining*1000;b.textContent='Duraklat';loop();}
+}
+function skipTimer(){cancelAnimationFrame(T.raf);closeTimer();}
+function finishTimer(){
+  cancelAnimationFrame(T.raf);
+  beep(T.mode==='rest'?2:3);vibrate([200,90,200]);
+  toast(T.mode==='rest'?'Mola bitti — sıradaki set!':'Süre doldu!');
+  setTimeout(closeTimer,700);
+}
+function closeTimer(){
+  sheet.classList.remove('show');
+  document.getElementById('toast').classList.remove('raised');
+}
+
+/* ---------- audio + haptics ---------- */
+let audioCtx;
+function unlockAudio(){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}catch(e){}}
+function beep(n=2){
+  try{
+    unlockAudio();let t=audioCtx.currentTime;
+    for(let i=0;i<n;i++){
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type='sine';o.frequency.value=i===n-1?900:640;
+      o.connect(g);g.connect(audioCtx.destination);
+      g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.32,t+.02);
+      g.gain.exponentialRampToValueAtTime(.0001,t+.2);
+      o.start(t);o.stop(t+.22);t+=.3;
+    }
+  }catch(e){}
+}
+function vibrate(p){try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}}
+
+/* ---------- reset modal ---------- */
+function openReset(){
+  const m=document.getElementById('modal');
+  document.getElementById('modal-body').innerHTML=`
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="width:42px;height:42px;border-radius:12px;background:var(--amber-soft);color:var(--amber);display:grid;place-items:center;flex:none"><i class="fa-solid fa-rotate-right"></i></div>
+      <div><h3>Programı sıfırla</h3><p class="tiny muted" style="margin-top:2px">Tüm oturum ve set kayıtları silinip 1. hafta · Gün A'dan başlanır.</p></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">İptal</button>
+      <button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="confirmReset()"><i class="fa-solid fa-trash"></i> Sıfırla</button>
+    </div>`;
+  m.hidden=false;
+}
+function closeModal(){document.getElementById('modal').hidden=true;}
+function confirmReset(){
+  state.completed={};state.setProgress={};state.activeWeek=1;state.slot={week:1,dayIndex:0};
+  store.set('fr_completed',{});store.set('fr_sets',{});store.set('fr_week',1);store.set('fr_slot',state.slot);
+  closeModal();renderHome();renderWorkout();toast('Program sıfırlandı.');
+}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+
+/* ---------- toast ---------- */
+let toastT;
+function toast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
