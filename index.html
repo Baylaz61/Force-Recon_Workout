@@ -1084,13 +1084,31 @@ function playAlarm(){
     try{ alarmEl.currentTime=0; alarmEl.play().catch(()=>{}); }catch(e){}
   }
 }
+/* base64 data URI → blob URL dönüşüm önbelleği
+   Neden: iOS Safari ve bazı tarayıcılar data: URI'yı <video src> olarak desteklemez,
+   ama blob: URL'yi her tarayıcı destekler. GitHub Pages HTTPS'te de sorunsuz çalışır. */
+const _blobCache={};
+function dataUriToBlob(dataUri){
+  try{
+    const[hdr,b64]=dataUri.split(',');
+    const mime=hdr.split(':')[1].split(';')[0];
+    const raw=atob(b64);
+    const buf=new Uint8Array(raw.length);
+    for(let i=0;i<raw.length;i++) buf[i]=raw.charCodeAt(i);
+    return URL.createObjectURL(new Blob([buf],{type:mime}));
+  }catch(e){return dataUri;} // dönüşüm başarısız → data URI ile dene
+}
 function videoSrc(key){
-  if(videos[key]) return videos[key];          // 1) bu oturumda yüklenen
-  if(VIDEO_URLS[key]) return VIDEO_URLS[key];   // 2) GitHub linki
-  if(VIDEO_EMBED[key]) return VIDEO_EMBED[key]; // 3) gömülü yedek
+  if(videos[key]) return videos[key];        // 1) bu oturumda yüklenen
+  if(VIDEO_URLS[key]) return VIDEO_URLS[key]; // 2) GitHub raw linki
+  if(VIDEO_EMBED[key]){                       // 3) gömülü base64 → blob URL
+    if(!_blobCache[key]) _blobCache[key]=dataUriToBlob(VIDEO_EMBED[key]);
+    return _blobCache[key];
+  }
   return null;
 }
 function onVidError(el){
+  // blob URL çalışmazsa data URI ile bir kez daha dene
   const k=el.getAttribute('data-key');
   if(VIDEO_EMBED[k] && el.getAttribute('src')!==VIDEO_EMBED[k]){
     el.setAttribute('src',VIDEO_EMBED[k]);
